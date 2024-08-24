@@ -7,12 +7,13 @@ class LoginPageLocators(object):
    LOGIN_BUTTON = "#login-submit"
    ERROR_MESSAGE = "#username-uid2-error"
    LOGIN_BUTTON_ATTLASIAN = "#login-submit"
+   DISMISS_2FA = "#mfa-promote-dismiss"
 
 
 class BoardsPageLocators(object):
    USER_ICON = '.js-open-header-member-menu'
    BOARDS_SECTION = ".all-boards"
-   LOGOUT_BUTTON = 'div:nth-child(5) > ul:nth-child(3) > li:nth-child(1) > button:nth-child(1) > span'
+   LOGOUT_BUTTON = 'nav.IfckxJ5PbpJuxT:nth-child(2) > ul:nth-child(1) > li:nth-child(2) > button:nth-child(1)'
    LOGOUT_BUTTON_ATTLASIAN = "#logout-submit"
 
 

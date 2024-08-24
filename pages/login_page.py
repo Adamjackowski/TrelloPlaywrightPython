@@ -20,6 +20,9 @@ class LoginPage(BasePage):
     def login(self, user, expected_error=False):
         self.fill_fields(user,expected_error)
         self.click(self.element(LoginPageLocators.LOGIN_BUTTON))
+        if self.is_2fa_question():
+            self.click(self.element(LoginPageLocators.DISMISS_2FA))
+
 
     '''
     Method for filling in fields
@@ -48,3 +51,12 @@ class LoginPage(BasePage):
         self.is_opened()
         self.is_error_message()
     
+    '''
+    Method checks if 2fa message is displayed
+    '''
+    def is_2fa_question(self):
+        try:
+            expect(self.page.locator(LoginPageLocators.DISMISS_2FA)).to_be_visible()
+            return True
+        except:
+            return False
