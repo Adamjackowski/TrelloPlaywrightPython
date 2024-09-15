@@ -1,6 +1,7 @@
 import inspect
 import os
 from datetime import datetime
+from pathlib import Path
 import pytest
 
 
@@ -44,28 +45,12 @@ def browsers(playwright, declared_browser):
 Method for taking the screenshot and saving in the /screenshots directory. It is called in browser fixture
 '''
 def take_screenshot(browsers, test_name):
-    screenshots_dir = parentdir + '\screenshots'
+    screenshots_dir = Path(f"{parentdir}/screenshots")
     now = datetime.now().strftime("%m_%d_%Y_%H_%M_%S")
-    screenshot_file_path = '{}\{}_{}.png'.format(screenshots_dir, test_name, now)
-    browsers.save_screenshot(screenshot_file_path)
+    screenshot_file_name = '{}_{}.png'.format(test_name, now)
+    screenshot_file_path = Path(f"{screenshots_dir}/{screenshot_file_name}")
+    browsers.contexts[0].pages[0].screenshot(path = screenshot_file_path)
     return screenshot_file_path
-
-@pytest.hookimpl(tryfirst=True, hookwrapper=True)
-def pytest_runtest_makereport(item, call):
-    # execute all other hooks to obtain the report object
-    outcome = yield
-    rep = outcome.get_result()
-    # set a report attribute for each phase of a call, which can
-    # be "setup", "call", "teardown"
-
-    setattr(item, "rep_" + rep.when, rep)
-
-def screenshot(browsers, request):
-    failed_before = request.session.testsfailed
-    yield None
-    if request.session.testsfailed != failed_before:
-        test_name = request.node.name
-        take_screenshot(browsers, test_name)
 
 @pytest.fixture()
 def users():
@@ -74,7 +59,7 @@ def users():
     return _users
 
 
-@pytest.mark.hookwrapper
+@pytest.hookimpl(hookwrapper=True)
 def pytest_runtest_makereport(item, call):
     pytest_html = item.config.pluginmanager.getplugin('html')
     outcome = yield
@@ -84,9 +69,8 @@ def pytest_runtest_makereport(item, call):
         browser = item.funcargs['browsers']
         xfail = hasattr(report, 'wasxfail')
         if (report.skipped and xfail) or (report.failed and not xfail):
-            # if pytest_html != None:
-            #     extra.append(pytest_html.extras.image("file:///" + take_screenshot(browser, item.name)))
-            # else:
-            #     take_screenshot(browser, item.name)
+                extra.append(pytest_html.extras.image(str(take_screenshot(browser, item.name))))
+        else:
             None
+            #take_screenshot(browser, item.name)  
         report.extra = extra
