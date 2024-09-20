@@ -38,6 +38,7 @@ def browsers(playwright, declared_browser):
     elif choosen_browser == "Safari":
         browser = playwright.webkit.launch(headless=False)
         browser.new_page()
+    browser.new_context(locale="en-GB")
     yield browser
     browser.close()
 
