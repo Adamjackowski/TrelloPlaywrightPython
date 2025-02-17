@@ -50,7 +50,10 @@ def take_screenshot(browsers, test_name):
     now = datetime.now().strftime("%m_%d_%Y_%H_%M_%S")
     screenshot_file_name = '{}_{}.png'.format(test_name, now)
     screenshot_file_path = Path(f"{screenshots_dir}/{screenshot_file_name}")
-    browsers.contexts[0].pages[0].screenshot(path = screenshot_file_path)
+    try:
+        browsers.contexts[0].pages[0].screenshot(path = screenshot_file_path)
+    except:
+        print("\nCan't do a screenshot")
     return screenshot_file_path
 
 @pytest.fixture()
